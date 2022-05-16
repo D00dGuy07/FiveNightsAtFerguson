@@ -20,3 +20,9 @@ class RayCastResult:
 		self.DidHitTile = didHitTile
 		self.CollisionPoint = collisionPoint
 		self.Distance = distance
+
+class Camera:
+	def __init__(self, position, lookAngle, fov):
+		self.Position = position
+		self.LookAngle = lookAngle
+		self.FOV = fov
