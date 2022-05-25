@@ -11,7 +11,7 @@ class Player:
 		self.WalkSpeed = walkSpeed
 		self.TurnSpeed = turnSpeed
 
-	def Update(self, windowManager):
+	def Update(self, world, windowManager):
 		if windowManager.MouseCaptured:
 			self.LookAngle += windowManager.MouseDelta.x
 
@@ -25,25 +25,35 @@ class Player:
 
 		deltaTime = windowManager.DeltaTime
 
-		# WASD Control
+		moveVector = glm.vec2(0, 0)
 		if keysPressed[pygame.K_w]:
-			self.Position += lookVector * self.WalkSpeed * deltaTime
+			moveVector += lookVector
 		if keysPressed[pygame.K_s]:
-			self.Position -= lookVector * self.WalkSpeed  * deltaTime
+			moveVector -= lookVector
 		if keysPressed[pygame.K_a]:
-			self.Position += rightVector * self.WalkSpeed  * deltaTime
+			moveVector += rightVector
 		if keysPressed[pygame.K_d]:
-			self.Position -= rightVector * self.WalkSpeed  * deltaTime
+			moveVector -= rightVector
 
-		# Arrow key control control
-		if keysPressed[pygame.K_LEFT]:
-			self.LookAngle -= self.TurnSpeed * deltaTime
-		if keysPressed[pygame.K_RIGHT]:
-			self.LookAngle += self.TurnSpeed * deltaTime
-		if keysPressed[pygame.K_UP]:
-			self.Position += lookVector * self.WalkSpeed  * deltaTime
-		if keysPressed[pygame.K_DOWN]:
-			self.Position -= lookVector * self.WalkSpeed  * deltaTime
+		if moveVector.x != 0 or moveVector.y != 0:
+			moveVector = glm.normalize(moveVector)
+			
+			newPosition = self.Position + moveVector * self.WalkSpeed * deltaTime
+
+			cornerStates = [
+				world.Get(glm.ivec2(newPosition + glm.vec2(0.1, 0.1))),
+				world.Get(glm.ivec2(newPosition + glm.vec2(-0.1, 0.1))),
+				world.Get(glm.ivec2(newPosition + glm.vec2(0.1, -0.1))),
+				world.Get(glm.ivec2(newPosition + glm.vec2(-0.1, -0.1))),
+			]
+
+			totalCollisions = 0
+			for cornerState in cornerStates:
+				totalCollisions += cornerState
+			print(totalCollisions)
+
+			self.Position = newPosition
+
 
 	def UpdateCamera(self, camera):
 		camera.Position = self.Position

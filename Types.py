@@ -10,7 +10,9 @@ class Grid2D:
 			self.Buffer = []
 
 	def Get(self, coord):
-		return self.Buffer[coord.y * self.Width + coord.x]
+		if coord.x >= 0 and coord.x < self.Width and coord.y >= 0 and coord.y < self.Height:
+			return self.Buffer[coord.y * self.Width + coord.x]
+		return 0
 
 	def Set(self, coord, value):
 		self.Buffer[coord.y * self.Width + coord.x] = value

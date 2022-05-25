@@ -26,7 +26,7 @@ def main():
 
 		# Game logic
 		
-		player.Update(windowManager)
+		player.Update(mazeGrid, windowManager)
 		player.UpdateCamera(camera)
 
 		# Render
