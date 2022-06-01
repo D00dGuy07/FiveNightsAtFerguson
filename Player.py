@@ -27,7 +27,7 @@ class Player:
 
 	def Update(self, world, windowManager):
 		if windowManager.MouseCaptured:
-			self.LookAngle += windowManager.MouseDelta.x
+			self.LookAngle = (self.LookAngle + windowManager.MouseDelta.x) % 360
 
 		lookVector = glm.vec2(
 			math.cos(math.radians(self.LookAngle)),
