@@ -107,7 +107,7 @@ def RenderWorld(surface, worldData, sprites, camera):
 		])
 
 	for x in range(screenSize.x):
-		rayAngle = (camera.LookAngle - camera.FOV / 2) + camera.FOV * (x / (screenSize.x - 1))
+		rayAngle = (camera.LookAngle - camera.FOV / 2) + camera.FOV * (x / (screenSize.x - 1)) 
 		rayResult = CastRay(worldData, camera.Position, glm.vec2(
 			math.cos(math.radians(rayAngle)),
 			math.sin(math.radians(rayAngle))
@@ -117,11 +117,20 @@ def RenderWorld(surface, worldData, sprites, camera):
 			adjustedDistance = max(rayResult.Distance * math.cos(math.radians(camera.LookAngle - rayAngle)), 1)
 			wallHeight = max(min(screenSize.y / adjustedDistance, screenSize.y), 0)
 			if wallHeight > 0:
+				pos = rayResult.CollisionPoint
+
+				color = None
+				distanceFog = max(1 - pow(rayResult.Distance, 1.3) / 5, 0)
+				if round(pos.x * 2) % 2 == 0 and round(pos.y * 2) % 2 == 0:
+					color = glm.vec3(235, 161, 52) * distanceFog
+				else:
+					color = glm.vec3(255, 255, 255) * distanceFog
+
 				renderQueue.append([
 					adjustedDistance,
 					drawWallSection,
 					[
-						(0, 0, max(255 - rayResult.Distance * 10, 0)),
+						(color.x, color.y, color.z),
 						x, screenSize.y / 2 - wallHeight / 2,
 						wallHeight
 					]
