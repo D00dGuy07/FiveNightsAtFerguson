@@ -80,8 +80,16 @@ def RenderWorld(surface, worldData, sprites, camera):
 		directionVector = sprite[0] - camera.Position
 
 		a = round(math.degrees(math.atan2(directionVector.y, directionVector.x)))
-
 		distance = glm.length(directionVector)
+
+		rayResult = CastRay(worldData, camera.Position, glm.vec2(
+			math.cos(math.radians(a)),
+			math.sin(math.radians(a))
+		))
+		distanceDifference = distance - rayResult.Distance
+		if distanceDifference > 1:
+			continue # Don't render if there's a wall blocking it
+
 		adjustedDistance = distance * math.cos(math.radians(camera.LookAngle - a))
 		if adjustedDistance == 0: continue
 
@@ -141,3 +149,38 @@ def RenderWorld(surface, worldData, sprites, camera):
 	for renderTask in renderQueue:
 		renderTask[1](renderTask[2], surface)
 	
+def endPosSort(value):
+	return value[1]
+
+def FindEndPos(grid, startPos):
+	offsets = [
+		glm.ivec2( 1,  0),
+		glm.ivec2( 0,  1),
+		glm.ivec2(-1,  0),
+		glm.ivec2( 0, -1)
+	]
+
+	lessSuitablePositions = []
+	suitablePositions = []
+	for y in range(grid.Height):
+		for x in range(grid.Width):
+			coord = glm.ivec2(x, y)
+			if grid.Get(coord) == 1:
+				continue
+
+			coordData = [coord, glm.distance2(glm.vec2(startPos), glm.vec2(coord))]
+			lessSuitablePositions.append(coordData)
+
+			emptyCount = 0
+			for offset in offsets:
+				emptyCount += int(grid.Get(coord + offset) == 0)
+
+			if emptyCount == 1:
+				suitablePositions.append(coordData)
+
+	if len(suitablePositions) == 0:
+		lessSuitablePositions.sort(reverse=True, key=endPosSort)
+		return lessSuitablePositions[0][0]
+
+	suitablePositions.sort(reverse=True, key=endPosSort)
+	return suitablePositions[0][0]

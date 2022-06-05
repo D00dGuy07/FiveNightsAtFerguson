@@ -19,11 +19,10 @@ doubleCollisionLookup = {
 }
 
 class Player:
-	def __init__(self, position, lookAngle, walkSpeed, turnSpeed):
+	def __init__(self, position, lookAngle, walkSpeed):
 		self.Position = position
 		self.LookAngle = lookAngle
 		self.WalkSpeed = walkSpeed
-		self.TurnSpeed = turnSpeed
 
 	def Update(self, world, windowManager):
 		if windowManager.MouseCaptured:

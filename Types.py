@@ -17,6 +17,11 @@ class Grid2D:
 	def Set(self, coord, value):
 		self.Buffer[coord.y * self.Width + coord.x] = value
 
+class MazeData:
+	def __init__(self, grid, startPos):
+		self.Grid = grid
+		self.StartPos = startPos
+
 class RayCastResult:
 	def __init__(self, didHitTile, collisionPoint, cellCoordinates, distance):
 		self.DidHitTile = didHitTile

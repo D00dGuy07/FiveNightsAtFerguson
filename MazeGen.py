@@ -3,7 +3,10 @@ import random
 
 import Types
 
-def GenerateMazeGrid(width, height):
+def GenerateMazeGrid(size):
+	width = size.x
+	height = size.y
+
 	# Prefill state lists
 	grid = Types.Grid2D(width * 2 + 1, height * 2 + 1, fill=False)
 	for y in range(grid.Height):
@@ -18,8 +21,9 @@ def GenerateMazeGrid(width, height):
 	visitedState = Types.Grid2D(width, height, False)
 
 	# Generate maze
-	#cellStack = [glm.ivec2(random.randint(0, width - 1), random.randint(0, height - 1))]
-	cellStack = [glm.ivec2(0, 0)]
+	startPos = glm.ivec2(random.randint(0, width - 1), random.randint(0, height - 1))
+	cellStack = [startPos]
+	#cellStack = [glm.ivec2(0, 0)]
 	visitedState.Set(cellStack[0], True)
 	while len(cellStack) > 0:
 		currentCell = cellStack.pop()
@@ -51,4 +55,4 @@ def GenerateMazeGrid(width, height):
 			visitedState.Set(nextCell, True)
 			cellStack.append(nextCell)
 
-	return grid
+	return Types.MazeData(grid, (startPos * 2) + glm.ivec2(1, 1))

@@ -16,22 +16,40 @@ def main():
 
 	windowManager = WindowManager.WindowManager(glm.ivec2(1080, 720), 60)
 
-	mazeGrid = MazeGen.GenerateMazeGrid(20, 20)
+	mazeSize = glm.ivec2(5, 5)
+
+	mazeData = MazeGen.GenerateMazeGrid(mazeSize)
+	mazeGrid = mazeData.Grid
+
+	offsets = [
+		[glm.ivec2( 1,  0), 0],
+		[glm.ivec2( 0,  1), 90],
+		[glm.ivec2(-1,  0), 180],
+		[glm.ivec2( 0, -1), 270]
+	]
+	pickedOffset = None
+	for offset in offsets:
+		if mazeGrid.Get(mazeData.StartPos + offset[0]) == 0:
+			pickedOffset = offset
+			break
+
+	player = Player.Player(glm.vec2(mazeData.StartPos) + glm.vec2(0.5, 0.5) + glm.vec2(pickedOffset[0]), pickedOffset[1], 2.5)
+
 	camera = Types.Camera(None, None, 70)
 
-	player = Player.Player(glm.vec2(1.5, 1.5), 0, 2.5, 45)
-	player.UpdateCamera(camera)
-
-	miniMap = MiniMap.MiniMap(glm.ivec2(20, 20), glm.ivec2(200, 200), 10, 10)
+	miniMap = MiniMap.MiniMap(mazeSize, glm.ivec2(200, 200), 10, 10)
 	
+	endPos = WorldLogic.FindEndPos(mazeGrid, mazeData.StartPos)
+	print(endPos)
+
 	sprites = [
 		[
-			glm.vec2(2.5, 1.5),
-			pygame.image.load("bennon.png")
+			glm.vec2(mazeData.StartPos) + glm.vec2(0.5, 0.5),
+			pygame.image.load("grass.png")
 		],
 		[
-			glm.vec2(5, 5),
-			pygame.image.load("reid.png")
+			glm.vec2(endPos) + glm.vec2(0.5, 0.5),
+			pygame.image.load("exit.png")
 		]
 	]
 
