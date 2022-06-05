@@ -65,8 +65,8 @@ def CastRay(grid, rayStart, rayDirection, maxDistance=100):
 				tileFound = True
 
 	if tileFound:
-		return Types.RayCastResult(True, rayStart + rayDirection * distance, distance)
-	return Types.RayCastResult(False, None, None)
+		return Types.RayCastResult(True, rayStart + rayDirection * distance, currentCell, distance)
+	return Types.RayCastResult(False, None, None, None)
 
 def RenderWorld(surface, worldData, sprites, camera):
 	screenSize = glm.ivec2(surface.get_width(), surface.get_height())

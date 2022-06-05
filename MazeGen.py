@@ -8,17 +8,14 @@ def GenerateMazeGrid(width, height):
 	grid = Types.Grid2D(width * 2 + 1, height * 2 + 1, fill=False)
 	for y in range(grid.Height):
 		for x in range(grid.Width):
-			if (x == 0 or x == grid.Width - 1 or
-			   y == 0 or y == grid.Height - 1):
+			if (x == 0 or x == grid.Width - 1 or y == 0 or y == grid.Height - 1):
 				grid.Buffer.append(1)
 			elif x % 2 == 1 and y % 2 == 1:
 				grid.Buffer.append(0)
 			else:
-				grid.Buffer.append(1) # Should be 1
+				grid.Buffer.append(1)
 
 	visitedState = Types.Grid2D(width, height, False)
-
-	#return grid
 
 	# Generate maze
 	#cellStack = [glm.ivec2(random.randint(0, width - 1), random.randint(0, height - 1))]

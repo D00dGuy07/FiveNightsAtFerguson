@@ -18,9 +18,10 @@ class Grid2D:
 		self.Buffer[coord.y * self.Width + coord.x] = value
 
 class RayCastResult:
-	def __init__(self, didHitTile, collisionPoint, distance):
+	def __init__(self, didHitTile, collisionPoint, cellCoordinates, distance):
 		self.DidHitTile = didHitTile
 		self.CollisionPoint = collisionPoint
+		self.CellCoordinates = cellCoordinates
 		self.Distance = distance
 
 class Camera:
