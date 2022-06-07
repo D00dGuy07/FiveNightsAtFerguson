@@ -1,6 +1,7 @@
 import pygame
 import glm
 import math
+import random
 
 import Types
 
@@ -184,3 +185,27 @@ def FindEndPos(grid, startPos):
 
 	suitablePositions.sort(reverse=True, key=endPosSort)
 	return suitablePositions[0][0]
+
+def FindRandomEmpty(grid):
+	suitablePositions = []
+	for y in range(grid.Height):
+		for x in range(grid.Width):
+			coord = glm.ivec2(x, y)
+			if grid.Get(coord) == 1:
+				continue
+
+			suitablePositions.append(coord)
+
+	return random.choice(suitablePositions)
+
+def FindFirstAdjacentEmpty(grid, pos):
+	neighbors = [
+		pos + glm.ivec2( 0,  1),
+		pos + glm.ivec2( 1,  0),
+		pos + glm.ivec2( 0, -1),
+		pos + glm.ivec2(-1,  0)
+	]
+
+	for neighbor in neighbors:
+		if grid.Get(neighbor) == 0:
+			return neighbor
