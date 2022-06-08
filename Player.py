@@ -2,6 +2,7 @@ import pygame
 import glm
 import math
 
+import WindowManager
 import Types
 
 singleCollisionLookup = [
@@ -23,6 +24,8 @@ class Player:
 		self.Position = position
 		self.LookAngle = lookAngle
 		self.WalkSpeed = walkSpeed
+		
+		self.Dead = False
 
 	def Update(self, world, windowManager):
 		if windowManager.MouseCaptured:
@@ -34,18 +37,16 @@ class Player:
 		)
 		rightVector = glm.vec2(lookVector.y, -lookVector.x)
 
-		keysPressed = pygame.key.get_pressed()
-
 		deltaTime = windowManager.DeltaTime
 
 		moveVector = glm.vec2(0, 0)
-		if keysPressed[pygame.K_w]:
+		if windowManager.GetKeyState(pygame.K_w) <= WindowManager.KeyPressed:
 			moveVector += lookVector
-		if keysPressed[pygame.K_s]:
+		if windowManager.GetKeyState(pygame.K_s) <= WindowManager.KeyPressed:
 			moveVector -= lookVector
-		if keysPressed[pygame.K_a]:
+		if windowManager.GetKeyState(pygame.K_a) <= WindowManager.KeyPressed:
 			moveVector += rightVector
-		if keysPressed[pygame.K_d]:
+		if windowManager.GetKeyState(pygame.K_d) <= WindowManager.KeyPressed:
 			moveVector -= rightVector
 
 		if moveVector.x != 0 or moveVector.y != 0:

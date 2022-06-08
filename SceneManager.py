@@ -7,6 +7,9 @@ import WorldLogic
 import Player
 import Types
 import Reid
+import Grass
+import TextRenderer
+import LevelExit
 
 import ResourceManager
 
@@ -20,7 +23,10 @@ class SceneManager:
 		self.MazeGrid = mazeData.Grid
 		self.StartPos = mazeData.StartPos
 		self.EndPos = WorldLogic.FindEndPos(self.MazeGrid, self.StartPos)
-		self.GrassPos = WorldLogic.FindRandomEmpty(self.MazeGrid)
+		self.Exit = LevelExit.LevelExit(self.EndPos)
+
+		grassPos = WorldLogic.FindRandomEmpty(self.MazeGrid)
+		self.Grass = Grass.Grass(glm.vec2(grassPos) + glm.vec2(0.5, 0.5),)
 
 		# Create the player
 		offsets = [
@@ -38,40 +44,36 @@ class SceneManager:
 			glm.vec2(self.StartPos) + glm.vec2(0.5, 0.5), pickedOffset[1], 2.5)
 
 		# Create the camera and minimap
-		self.Camera = Types.Camera(None, None, 70)
+		self.Camera = Types.Camera(None, None, 80)
 		self.MiniMap = MiniMap.MiniMap(mazeSize, glm.ivec2(200, 200), 10, 10)
 
-		self.Reid = Reid.Reid(glm.vec2(WorldLogic.FindFirstAdjacentEmpty(self.MazeGrid, self.StartPos)) + glm.vec2(0.5, 0.5), 1)
-		self.Reid.MoveTo(glm.vec2(self.EndPos))
+		self.Reid = Reid.Reid(glm.vec2(WorldLogic.FindFirstAdjacentEmpty(self.MazeGrid, self.EndPos)) + glm.vec2(0.5, 0.5), 1.5)
 
 		# Sprite rendering data
-		self.Sprites = [
-			[
-				self.Reid.Position,
-				ResourceManager.ReidImage
-			],
-			[
-				glm.vec2(self.GrassPos) + glm.vec2(0.5, 0.5),
-				ResourceManager.GrassImage
-			],
-			[
-				glm.vec2(self.EndPos) + glm.vec2(0.5, 0.5),
-				ResourceManager.ExitImage
-			]
-		]
+		self.Sprites = []
 
 	def Update(self):
 		self.Player.Update(self.MazeGrid, self.WindowManager)
 		self.Player.UpdateCamera(self.Camera)
 		self.MiniMap.Update(self.Camera, self.MazeGrid)
 
-		self.Reid.Update(self.MazeGrid, self.WindowManager.DeltaTime)
-		self.Reid.MoveTo(self.Player.Position)
-		self.Sprites[0][0] = self.Reid.Position
+		self.Reid.Update(self.MazeGrid, self.Player, self.Grass, self.WindowManager.DeltaTime)
+		self.Grass.Update(self.Player, self.WindowManager)
+
+		self.Exit.Update(self.Player, self.Reid, self.MazeGrid)
 
 	def Render(self):
 		self.WindowManager.Surface.fill((0, 0, 0))
+
+		self.Sprites.clear()
+
+		self.Reid.SpriteRender(self.Sprites)
+		self.Grass.SpriteRender(self.Sprites)
+		self.Exit.SpriteRender(self.Sprites)
+
 		WorldLogic.RenderWorld(self.WindowManager.Surface, self.MazeGrid, self.Sprites, self.Camera)
+
+		self.Grass.Render(self.WindowManager)
 
 		self.MiniMap.Render(self.Camera)
 		mapPosition = self.WindowManager.ScreenSize - self.MiniMap.WindowResolution - glm.ivec2(5, 5)
